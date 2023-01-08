@@ -11,8 +11,8 @@ public class PageSteps {
         webElement.click();
     }
 
-    @Step("Проверяем что страница загрузилась")
-    public static void isLoadPage(AbstractBasePage page) {
-        page.isLoadPage();
+    @Step("Проверяем что урл совпадает")
+    public static void pageUrlEqualsCurrentUrl(AbstractBasePage page) {
+        page.pageUrlEqualsCurrentUrl();
     }
 }

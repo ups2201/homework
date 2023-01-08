@@ -5,13 +5,10 @@ import annotations.PageName;
 import annotations.UrlPrefix;
 import annotations.UrlTemplate;
 import helpers.AllureHelper;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public abstract class AbstractBasePage<T> {
     protected WebDriver driver;
@@ -67,23 +64,26 @@ public abstract class AbstractBasePage<T> {
         return (T) this;
     }
 
-    private void checkIdentifierByPage() {
+    @Step("Проверяем что идентификатор страницы существует")
+    public T pageIdentifierIsExist(String... args) {
         Identifier identifier = getClass().getAnnotation(Identifier.class);
         try {
             if (identifier == null) {
-                return;
+                return (T) this;
             }
             if (identifier.xpath() != null) {
-                driver.findElement(By.xpath(identifier.xpath()));
+                String xpath = String.format(identifier.xpath(), (Object[]) args);
+                driver.findElement(By.xpath(xpath));
             } else if (identifier.css() != null) {
-                driver.findElement(By.cssSelector(identifier.css()));
+                String css = String.format(identifier.css(), (Object[]) args);
+                driver.findElement(By.cssSelector(css));
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             Assertions.fail("Не найден ключевой элемент страницы c identifier = " + identifier);
         }
+        return (T) this;
     }
-
     private String getPageName() {
         PageName pageName = getClass().getAnnotation(PageName.class);
         if (pageName != null) {
@@ -94,14 +94,20 @@ public abstract class AbstractBasePage<T> {
     }
 
     @Step
-    public T isLoadPage(String... urlParameters) {
+    public T pageUrlEqualsCurrentUrl(String... urlParameters) {
         AllureHelper.setStepName(String.format("Проверяем что страница '%s' загрузилась", getPageName()));
-        checkIdentifierByPage();
         String url = getUrl(urlParameters);
         String currentUrl = driver.getCurrentUrl();
 
         Assertions.assertThat(url).withFailMessage(String.format("Url страницы %s не совпдает с текущим %s", url, currentUrl)).isEqualTo(currentUrl);
 
+        return (T) this;
+    }
+
+    @Step
+    public T pageTitleShouldBeSameAs(String title) {
+        AllureHelper.setStepName(String.format("Проверяем что страница '%s' открылась с названием вкладки '%s'", getPageName(), title));
+        Assertions.assertThat(driver.getTitle()).withFailMessage("Название текущей вкладки не совпадает").isEqualTo(title);
         return (T) this;
     }
 }
