@@ -6,9 +6,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class StandardWaiter implements WaiterInt {
+public class StandardWaiter implements IWaiter {
 
-  private WebDriver driver = null;
+  private WebDriver driver;
 
   public StandardWaiter(WebDriver driver) {
     this.driver = driver;

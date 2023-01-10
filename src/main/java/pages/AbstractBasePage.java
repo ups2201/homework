@@ -1,5 +1,6 @@
 package pages;
 
+import actions.CommonActions;
 import annotations.Identifier;
 import annotations.PageName;
 import annotations.UrlPrefix;
@@ -10,12 +11,11 @@ import org.assertj.core.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public abstract class AbstractBasePage<T> {
-    protected WebDriver driver;
+public abstract class AbstractBasePage<T> extends CommonActions<T> {
     private String baseUrl = System.getProperty("webdriver.base.url");
 
     public AbstractBasePage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
     private String getUrlPrefix() {

@@ -4,16 +4,12 @@ import annotations.Component;
 import components.AbstractComponent;
 import data.menu.CourseTypeData;
 import data.menu.IMenuItem;
-import helpers.StringHelper;
+import helpers.AllureHelper;
 import io.qameta.allure.Step;
-import org.assertj.core.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import org.openqa.selenium.interactions.Actions;
 
 @Component(css = ".header3__nav_main")
 public class NavigationMenuComponent extends AbstractComponent<NavigationMenuComponent> {
@@ -22,24 +18,19 @@ public class NavigationMenuComponent extends AbstractComponent<NavigationMenuCom
         super(driver);
     }
 
-    public NavigationMenuComponent clickSubItem(CourseTypeData courseTypeData) {
-        WebElement menuItem = getComponentEntity().findElement(By.xpath(String.format(".//a[contains(text(), '%s')]", courseTypeData.getName())));
+    @Step
+    public NavigationMenuComponent clickSubItem(IMenuItem menuItem, CourseTypeData courseTypeData) {
+        AllureHelper.setStepName(String.format("Открываем меню '%s' и нажимаем на тему '%s'", menuItem.getName(), courseTypeData.getName()));
         WebElement menuSubItem = getComponentEntity().findElement(By.xpath(String.format(".//a[contains(text(), '%s')]", courseTypeData.getName())));
+        this.moveItem(menuItem).moveToElement(menuSubItem).click().build().perform();
 
         return this;
     }
 
-    public NavigationMenuComponent clickMenuItem(IMenuItem menuItem) {
-        WebElement item = driver.findElement(By.xpath(String.format("//span[text()='%s']", menuItem.getName())));
-        item.click();
-        return this;
-    }
-
-    private NavigationMenuComponent moveItem(IMenuItem menuItem) {
+    private Actions moveItem(IMenuItem menuItem) {
         WebElement item = driver.findElement(By.xpath(String.format("//span[text()='%s']", menuItem.getName())));
 
-        actions.moveToElement(item).build().perform();
-        return this;
+        return actions.moveToElement(item);
     }
 
 }

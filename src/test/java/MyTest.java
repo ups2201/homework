@@ -1,11 +1,15 @@
 import annotations.Driver;
 import components.courses.CourseComponent;
+import components.menu.NavigationMenuComponent;
+import data.menu.CourseTypeData;
+import data.menu.MenuItemData;
 import extentsions.UIExtentsion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import pages.CatalogCoursePage;
 import pages.CoursePage;
 import pages.MainPage;
 
@@ -40,4 +44,15 @@ public class MyTest {
         coursePage.pageIdentifierIsExist("Системный аналитик. Advanced");
     }
 
+    @Test
+    @DisplayName("Открываем блок курсов 'Программирование' через Actions")
+    public void openCourseInMenuTest() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.open();
+        NavigationMenuComponent navigationMenuComponent = new NavigationMenuComponent(driver);
+        navigationMenuComponent.clickSubItem(MenuItemData.LEARNING, CourseTypeData.Programmer);
+
+        CatalogCoursePage catalogCoursePage = new CatalogCoursePage(driver);
+        catalogCoursePage.pageIdentifierIsExist("Программирование");
+    }
 }

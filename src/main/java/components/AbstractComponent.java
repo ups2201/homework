@@ -6,10 +6,14 @@ import annotations.Driver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public abstract class AbstractComponent<T> extends CommonActions<T> {
-    @Driver
-    protected WebDriver driver;
+    {
+        this.standardWaiter.waitForCondition(ExpectedConditions.visibilityOfElementLocated(getComponentLocator()));
+    }
+
+//    protected WebDriver driver;
 
     public AbstractComponent(WebDriver driver) {
         super(driver);
@@ -19,9 +23,9 @@ public abstract class AbstractComponent<T> extends CommonActions<T> {
         Component component = getClass().getAnnotation(Component.class);
 
         if (component != null) {
-            if (component.xpath() != null) {
+            if (!component.xpath().isEmpty()) {
                 return By.xpath(component.xpath());
-            } else if (component.css() != null) {
+            } else if (!component.css().isEmpty()) {
                 return By.cssSelector(component.css());
             }
         }
