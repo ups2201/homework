@@ -5,7 +5,7 @@ import driver.impl.FireFoxWebDriver;
 import driver.impl.OperaWebDriver;
 import exceptions.DriverTypeNotSupported;
 import io.github.bonigarcia.wdm.config.DriverManagerType;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 import java.util.Locale;
 
@@ -17,17 +17,17 @@ public class WebDriverFactory implements IWebDriverFactory {
     }
 
     @Override
-    public WebDriver getDriver() {
+    public EventFiringWebDriver getDriver() {
         DriverManagerType browserType = getBrowserType();
         switch (browserType) {
             case CHROME: {
-                return new ChromeWebDriver().newDriver();
+                return new EventFiringWebDriver(new ChromeWebDriver().newDriver());
             }
             case OPERA: {
-                return new OperaWebDriver().newDriver();
+                return new EventFiringWebDriver(new OperaWebDriver().newDriver());
             }
             case FIREFOX: {
-                return new FireFoxWebDriver().newDriver();
+                return new EventFiringWebDriver(new FireFoxWebDriver().newDriver());
             }
             default: {
                 try {

@@ -2,10 +2,12 @@ package extentsions;
 
 import annotations.Driver;
 import driver.WebDriverFactory;
+import listeners.MouseListeners;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -16,7 +18,7 @@ import java.util.Set;
 
 public class UIExtentsion implements BeforeEachCallback, AfterEachCallback {
 
-    private WebDriver driver = null;
+    private EventFiringWebDriver driver = null;
     private Set<Field> getAnnotationFields(Class<? extends Annotation> annotation, ExtensionContext extensionContext) {
         Set<Field> fieldSet = new HashSet<>();
         Class<?> testClass = extensionContext.getTestClass().get();
@@ -33,11 +35,12 @@ public class UIExtentsion implements BeforeEachCallback, AfterEachCallback {
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeEach(ExtensionContext extensionContext) {
         driver = new WebDriverFactory().getDriver();
+        driver.register(new MouseListeners());
         Set<Field> fields = getAnnotationFields(Driver.class, extensionContext);
 
-        for (Field field: fields) {
+        for (Field field : fields) {
             if (field.getType().getName().equals(WebDriver.class.getName())) {
                 AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
                     try {
