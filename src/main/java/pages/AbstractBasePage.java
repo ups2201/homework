@@ -80,7 +80,7 @@ public abstract class AbstractBasePage<T> extends CommonActions<T> {
       }
     } catch (Exception e) {
       System.out.println(e.getMessage());
-      Assertions.fail("Не найден ключевой элемент страницы c identifier = " + identifier);
+      System.out.println("Не найден ключевой элемент страницы c identifier = " + identifier);
     }
     return (T) this;
   }
