@@ -36,7 +36,7 @@ public class CourseComponent extends AbstractComponent<CourseComponent> {
                 })
             .findFirst();
 
-    Assertions.assertThat(element.isPresent()).withFailMessage("Не найден курс с названием " + title).isFalse();
+    Assertions.assertThat(element.isPresent()).withFailMessage("Не найден курс с названием " + title).isTrue();
     return element.get();
   }
 

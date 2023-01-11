@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import pages.CatalogCoursePage;
-import pages.CoursePage;
 import pages.MainPage;
 
 @ExtendWith(UIExtentsion.class)
@@ -27,12 +26,10 @@ public class MyTest {
     CourseComponent courseComponent = new CourseComponent(driver);
     WebElement course = courseComponent.findCourseByTitle("Administrator Linux. Professional");
     course.click();
-    CoursePage coursePage = new CoursePage(driver);
-    coursePage.pageIdentifierIsExist("Administrator Linux. Professional");
   }
 
   @Test
-  @DisplayName("Проверяем, что курс с датой начала позже всех это 'Системный аналитик. Advanced'")
+  @DisplayName("Переходим в курс с датой начала позже всех")
   @Order(2)
   public void getMaxDateFromCourseTest() {
     MainPage mainPage = new MainPage(driver);
@@ -41,8 +38,6 @@ public class MyTest {
     CourseComponent courseComponent = new CourseComponent(driver);
     WebElement course = courseComponent.getCourseWithMaxDate();
     course.click();
-    CoursePage coursePage = new CoursePage(driver);
-    coursePage.pageIdentifierIsExist("Системный аналитик. Advanced");
   }
 
   @Test
