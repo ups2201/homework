@@ -5,7 +5,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 import waiters.StandardWaiter;
 
-
 public abstract class CommonActions<T> {
 
   protected WebDriver driver;
@@ -19,5 +18,4 @@ public abstract class CommonActions<T> {
     standardWaiter = new StandardWaiter(driver);
     actions = new Actions(driver);
   }
-
 }

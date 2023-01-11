@@ -12,102 +12,111 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public abstract class AbstractBasePage<T> extends CommonActions<T> {
-    private String baseUrl = System.getProperty("webdriver.base.url");
+  private String baseUrl = System.getProperty("webdriver.base.url");
 
-    public AbstractBasePage(WebDriver driver) {
-        super(driver);
+  public AbstractBasePage(WebDriver driver) {
+    super(driver);
+  }
+
+  private String getUrlPrefix() {
+    UrlPrefix urlPrefix = getClass().getAnnotation(UrlPrefix.class);
+    if (urlPrefix != null) {
+      String prefix = urlPrefix.value();
+      if (!prefix.startsWith("/")) {
+        return "/" + prefix;
+      }
+      return prefix;
+    }
+    return "";
+  }
+
+  private String getUrlTemplate() {
+    UrlTemplate urlTemplate = getClass().getAnnotation(UrlTemplate.class);
+    if (urlTemplate != null) {
+      return urlTemplate.value();
     }
 
-    private String getUrlPrefix() {
-        UrlPrefix urlPrefix = getClass().getAnnotation(UrlPrefix.class);
-        if (urlPrefix != null) {
-            String prefix = urlPrefix.value();
-            if (!prefix.startsWith("/")) {
-                return "/" + prefix;
-            }
-            return prefix;
-        }
-        return "";
+    return "";
+  }
+
+  protected String getUrl(String... urlParameters) {
+    String urlPrefix = getUrlPrefix();
+    String urlTemplate = getUrlTemplate();
+
+    for (int i = 1; i < urlParameters.length; i++) {
+      urlTemplate = urlTemplate.replace(String.format("{%d}", i), urlParameters[i]);
     }
 
-    private String getUrlTemplate() {
-        UrlTemplate urlTemplate = getClass().getAnnotation(UrlTemplate.class);
-        if (urlTemplate != null) {
-            return urlTemplate.value();
-        }
-
-        return "";
+    if (urlPrefix.isEmpty()) {
+      return baseUrl + urlTemplate;
     }
 
-    protected String getUrl(String... urlParameters) {
-        String urlPrefix = getUrlPrefix();
-        String urlTemplate = getUrlTemplate();
+    return baseUrl + urlPrefix + urlTemplate;
+  }
 
-        for (int i = 1; i< urlParameters.length; i++) {
-            urlTemplate = urlTemplate.replace(String.format("{%d}", i), urlParameters[i]);
-        }
+  @Step
+  public T open(String... urlParameters) {
+    AllureHelper.setStepName(String.format("Открываем страницу '%s'", getPageName()));
 
-        if (urlPrefix.isEmpty()) {
-            return baseUrl + urlTemplate;
-        }
+    String url = getUrl(urlParameters);
+    driver.get(url);
 
-        return baseUrl + urlPrefix + urlTemplate;
-    }
+    return (T) this;
+  }
 
-    @Step
-    public T open(String... urlParameters) {
-        AllureHelper.setStepName(String.format("Открываем страницу '%s'", getPageName()));
-
-        String url = getUrl(urlParameters);
-        driver.get(url);
-
+  @Step("Проверяем что идентификатор страницы существует")
+  public T pageIdentifierIsExist(String... args) {
+    Identifier identifier = getClass().getAnnotation(Identifier.class);
+    try {
+      if (identifier == null) {
         return (T) this;
+      }
+      if (identifier.xpath() != null) {
+        String xpath = String.format(identifier.xpath(), (Object[]) args);
+        driver.findElement(By.xpath(xpath));
+      } else if (identifier.css() != null) {
+        String css = String.format(identifier.css(), (Object[]) args);
+        driver.findElement(By.cssSelector(css));
+      }
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      Assertions.fail("Не найден ключевой элемент страницы c identifier = " + identifier);
+    }
+    return (T) this;
+  }
+
+  private String getPageName() {
+    PageName pageName = getClass().getAnnotation(PageName.class);
+    if (pageName != null) {
+      return pageName.value();
     }
 
-    @Step("Проверяем что идентификатор страницы существует")
-    public T pageIdentifierIsExist(String... args) {
-        Identifier identifier = getClass().getAnnotation(Identifier.class);
-        try {
-            if (identifier == null) {
-                return (T) this;
-            }
-            if (identifier.xpath() != null) {
-                String xpath = String.format(identifier.xpath(), (Object[]) args);
-                driver.findElement(By.xpath(xpath));
-            } else if (identifier.css() != null) {
-                String css = String.format(identifier.css(), (Object[]) args);
-                driver.findElement(By.cssSelector(css));
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            Assertions.fail("Не найден ключевой элемент страницы c identifier = " + identifier);
-        }
-        return (T) this;
-    }
-    private String getPageName() {
-        PageName pageName = getClass().getAnnotation(PageName.class);
-        if (pageName != null) {
-            return pageName.value();
-        }
+    return this.getClass().getSimpleName();
+  }
 
-        return this.getClass().getSimpleName();
-    }
+  @Step
+  public T pageUrlEqualsCurrentUrl(String... urlParameters) {
+    AllureHelper.setStepName(
+        String.format("Проверяем что страница '%s' загрузилась", getPageName()));
+    String url = getUrl(urlParameters);
+    String currentUrl = driver.getCurrentUrl();
 
-    @Step
-    public T pageUrlEqualsCurrentUrl(String... urlParameters) {
-        AllureHelper.setStepName(String.format("Проверяем что страница '%s' загрузилась", getPageName()));
-        String url = getUrl(urlParameters);
-        String currentUrl = driver.getCurrentUrl();
+    Assertions.assertThat(url)
+        .withFailMessage(String.format("Url страницы %s не совпдает с текущим %s", url, currentUrl))
+        .isEqualTo(currentUrl);
 
-        Assertions.assertThat(url).withFailMessage(String.format("Url страницы %s не совпдает с текущим %s", url, currentUrl)).isEqualTo(currentUrl);
+    return (T) this;
+  }
 
-        return (T) this;
-    }
-
-    @Step
-    public T pageTitleShouldBeSameAs(String title) {
-        AllureHelper.setStepName(String.format("Проверяем что страница '%s' открылась с названием вкладки '%s'", getPageName(), title));
-        Assertions.assertThat(driver.getTitle()).withFailMessage("Название текущей вкладки не совпадает").isEqualTo(title);
-        return (T) this;
-    }
+  @Step
+  public T pageTitleShouldBeSameAs(String title) {
+    AllureHelper.setStepName(
+        String.format(
+            "Проверяем что страница '%s' открылась с названием вкладки '%s'",
+            getPageName(), title));
+    Assertions.assertThat(driver.getTitle())
+        .withFailMessage("Название текущей вкладки не совпадает")
+        .isEqualTo(title);
+    return (T) this;
+  }
 }

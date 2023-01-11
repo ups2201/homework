@@ -13,8 +13,8 @@ import org.openqa.selenium.support.PageFactory;
 @Identifier(xpath = "//h1[contains(text(), '%s')]")
 public class CoursePage extends AbstractBasePage<CoursePage> {
 
-    public CoursePage(WebDriver driver) {
-        super(driver);
-        PageFactory.initElements(driver, this);
-    }
+  public CoursePage(WebDriver driver) {
+    super(driver);
+    PageFactory.initElements(driver, this);
+  }
 }

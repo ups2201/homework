@@ -1,5 +1,5 @@
 package data.menu;
 
 public interface IMenuItem {
-    String getName();
+  String getName();
 }

@@ -14,23 +14,29 @@ import org.openqa.selenium.interactions.Actions;
 @Component(css = ".header3__nav_main")
 public class NavigationMenuComponent extends AbstractComponent<NavigationMenuComponent> {
 
-    public NavigationMenuComponent(WebDriver driver) {
-        super(driver);
-    }
+  public NavigationMenuComponent(WebDriver driver) {
+    super(driver);
+  }
 
-    @Step
-    public NavigationMenuComponent clickSubItem(IMenuItem menuItem, CourseTypeData courseTypeData) {
-        AllureHelper.setStepName(String.format("Открываем меню '%s' и нажимаем на тему '%s'", menuItem.getName(), courseTypeData.getName()));
-        WebElement menuSubItem = getComponentEntity().findElement(By.xpath(String.format(".//a[contains(text(), '%s')]", courseTypeData.getName())));
-        this.moveItem(menuItem).moveToElement(menuSubItem).click().build().perform();
+  @Step
+  public NavigationMenuComponent clickSubItem(IMenuItem menuItem, CourseTypeData courseTypeData) {
+    AllureHelper.setStepName(
+        String.format(
+            "Открываем меню '%s' и нажимаем на тему '%s'",
+            menuItem.getName(), courseTypeData.getName()));
+    WebElement menuSubItem =
+        getComponentEntity()
+            .findElement(
+                By.xpath(String.format(".//a[contains(text(), '%s')]", courseTypeData.getName())));
+    this.moveItem(menuItem).moveToElement(menuSubItem).click().build().perform();
 
-        return this;
-    }
+    return this;
+  }
 
-    private Actions moveItem(IMenuItem menuItem) {
-        WebElement item = driver.findElement(By.xpath(String.format("//span[text()='%s']", menuItem.getName())));
+  private Actions moveItem(IMenuItem menuItem) {
+    WebElement item =
+        driver.findElement(By.xpath(String.format("//span[text()='%s']", menuItem.getName())));
 
-        return actions.moveToElement(item);
-    }
-
+    return actions.moveToElement(item);
+  }
 }
