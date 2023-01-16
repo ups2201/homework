@@ -12,13 +12,11 @@ import pages.CatalogCoursePage;
 import pages.MainPage;
 
 @ExtendWith(UIExtentsion.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MyTest {
   @Driver private WebDriver driver;
 
   @Test
   @DisplayName("Поиск курса с названием 'Administrator Linux. Professional'")
-  @Order(1)
   public void findCourseByNameTest() {
     MainPage mainPage = new MainPage(driver);
     mainPage.open();
@@ -30,7 +28,6 @@ public class MyTest {
 
   @Test
   @DisplayName("Переходим в курс с датой начала позже всех")
-  @Order(2)
   public void getMaxDateFromCourseTest() {
     MainPage mainPage = new MainPage(driver);
     mainPage.open();
@@ -41,7 +38,6 @@ public class MyTest {
   }
 
   @Test
-  @Order(3)
   @DisplayName("Открываем блок курсов 'Программирование' через Actions")
   public void openCourseInMenuTest() {
     MainPage mainPage = new MainPage(driver);
