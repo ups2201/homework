@@ -1,27 +1,37 @@
-import annotations.Driver;
-import components.courses.CourseComponent;
-import components.menu.NavigationMenuComponent;
-import data.menu.CourseTypeData;
-import data.menu.MenuItemData;
-import extentsions.UIExtentsion;
-import org.junit.jupiter.api.*;
+import com.google.inject.Inject;
+import com.otus.annotations.Driver;
+import com.otus.components.courses.CourseComponent;
+import com.otus.components.menu.NavigationMenuComponent;
+import com.otus.data.menu.CourseTypeData;
+import com.otus.data.menu.MenuItemData;
+import com.otus.extentsions.UIExtentsion;
+import com.otus.pages.CatalogCoursePage;
+import com.otus.pages.MainPage;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import pages.CatalogCoursePage;
-import pages.MainPage;
 
 @ExtendWith(UIExtentsion.class)
 public class MyTest {
-  @Driver private WebDriver driver;
+  @Driver
+  private WebDriver driver;
+
+  @Inject
+  private MainPage mainPage;
+  @Inject
+  private CourseComponent courseComponent;
+  @Inject
+  private NavigationMenuComponent navigationMenuComponent;
+  @Inject
+  private CatalogCoursePage catalogCoursePage;
 
   @Test
   @DisplayName("Поиск курса с названием 'Administrator Linux. Professional'")
   public void findCourseByNameTest() {
-    MainPage mainPage = new MainPage(driver);
     mainPage.open();
     mainPage.pageUrlEqualsCurrentUrl();
-    CourseComponent courseComponent = new CourseComponent(driver);
     WebElement course = courseComponent.findCourseByTitle("Administrator Linux. Professional");
     course.click();
   }
@@ -29,10 +39,8 @@ public class MyTest {
   @Test
   @DisplayName("Переходим в курс с датой начала позже всех")
   public void getMaxDateFromCourseTest() {
-    MainPage mainPage = new MainPage(driver);
     mainPage.open();
     mainPage.pageUrlEqualsCurrentUrl();
-    CourseComponent courseComponent = new CourseComponent(driver);
     WebElement course = courseComponent.getCourseWithMaxDate();
     course.click();
   }
@@ -40,12 +48,8 @@ public class MyTest {
   @Test
   @DisplayName("Открываем блок курсов 'Программирование' через Actions")
   public void openCourseInMenuTest() {
-    MainPage mainPage = new MainPage(driver);
     mainPage.open();
-    NavigationMenuComponent navigationMenuComponent = new NavigationMenuComponent(driver);
     navigationMenuComponent.clickSubItem(MenuItemData.LEARNING, CourseTypeData.Programmer);
-
-    CatalogCoursePage catalogCoursePage = new CatalogCoursePage(driver);
     catalogCoursePage.pageIdentifierIsExist("Программирование");
   }
 }
