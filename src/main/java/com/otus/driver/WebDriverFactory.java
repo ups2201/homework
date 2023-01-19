@@ -1,5 +1,7 @@
 package com.otus.driver;
 
+import com.google.inject.Inject;
+import com.otus.configs.GuiceScoped;
 import com.otus.driver.impl.ChromeWebDriver;
 import com.otus.driver.impl.FireFoxWebDriver;
 import com.otus.driver.impl.OperaWebDriver;
@@ -10,8 +12,20 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 public class WebDriverFactory implements IWebDriverFactory {
 
+  public GuiceScoped guiceScoped;
+
+
+  @Inject
+  public WebDriverFactory(GuiceScoped guiceScoped) {
+    this.guiceScoped = guiceScoped;
+  }
+
+  public WebDriverFactory() {
+
+  }
+
   private DriverManagerType getBrowserType() {
-    String browserTypeProperty = System.getProperty("browser").toUpperCase(Locale.ROOT);
+    String browserTypeProperty = guiceScoped.browserType.toUpperCase(Locale.ROOT);
     return DriverManagerType.valueOf(browserTypeProperty);
   }
 

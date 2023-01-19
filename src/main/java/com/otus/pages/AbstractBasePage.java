@@ -1,5 +1,6 @@
 package com.otus.pages;
 
+import com.google.inject.Inject;
 import com.otus.actions.CommonActions;
 import com.otus.annotations.Identifier;
 import com.otus.annotations.PageName;
@@ -14,6 +15,7 @@ import org.openqa.selenium.By;
 public abstract class AbstractBasePage<T> extends CommonActions<T> {
   private String baseUrl = System.getProperty("webdriver.base.url");
 
+  @Inject
   public AbstractBasePage(GuiceScoped guiceScoped) {
     super(guiceScoped);
   }
