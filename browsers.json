@@ -6,7 +6,7 @@
         "image": "selenoid/vnc:chrome_108.0",
         "port": "4444"
       },
-     "107.0": {
+      "107.0": {
         "image": "selenoid/vnc:chrome_107.0",
         "port": "4444"
       }
@@ -19,11 +19,10 @@
         "image": "selenoid/vnc:chrome_91.0",
         "port": "4444"
       },
-     "90.0": {
+      "90.0": {
         "image": "selenoid/vnc:chrome_90.0",
         "port": "4444"
       }
     }
   }
-
 }
