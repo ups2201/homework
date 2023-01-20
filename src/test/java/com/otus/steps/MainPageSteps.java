@@ -33,7 +33,7 @@ public class MainPageSteps {
     course.click();
   }
 
-  @И("^Получаем курсы больше указанной даты '(.*)' и выводим информацию$")
+  @И("^Получаем курсы больше или равно указанной даты '(.*)' и выводим информацию$")
   public void findCourse2(String date) {
     CourseComponent courseComponent = new CourseComponent(guiceScoped);
     courseComponent.getCourseGreaterDate(date);
