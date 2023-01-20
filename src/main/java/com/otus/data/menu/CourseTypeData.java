@@ -11,6 +11,15 @@ public enum CourseTypeData {
     this.name = name;
   }
 
+  public static CourseTypeData valueOfName(String name) {
+    for (CourseTypeData courseType : values()) {
+      if (courseType.name.equals(name)) {
+        return courseType;
+      }
+    }
+    return null;
+  }
+
   public String getName() {
     return name;
   }

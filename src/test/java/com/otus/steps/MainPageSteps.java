@@ -11,6 +11,7 @@ import com.otus.pages.CatalogCoursePage;
 import com.otus.pages.MainPage;
 import io.cucumber.java.ru.И;
 import io.cucumber.java.ru.Пусть;
+import org.assertj.core.api.Assertions;
 import org.openqa.selenium.WebElement;
 
 public class MainPageSteps {
@@ -38,12 +39,18 @@ public class MainPageSteps {
     courseComponent.getCourseGreaterDate(date);
   }
 
-  @И("^Получаем курсы с наименьшим и наибольшим периодом в теме 'Тестирование'$")
-  public void findShortAndLongTest() {
+  @И("^Получаем курсы с наименьшим и наибольшим периодом в теме '(.*)'$")
+  public void findShortAndLongTest(String courseType) {
     MainPage mainPage = new MainPage(guiceScoped);
     mainPage.open();
     NavigationMenuComponent navigationMenuComponent = new NavigationMenuComponent(guiceScoped);
-    navigationMenuComponent.clickSubItem(MenuItemData.LEARNING, CourseTypeData.QA);
+
+    CourseTypeData courseTypeData = CourseTypeData.valueOfName(courseType);
+    Assertions.assertThat(courseTypeData != null)
+        .withFailMessage("Не найдена тема курсов " + courseType)
+        .isTrue();
+
+    navigationMenuComponent.clickSubItem(MenuItemData.LEARNING, courseTypeData);
 
     CatalogCoursePage catalogCoursePage = new CatalogCoursePage(guiceScoped);
     catalogCoursePage.getShortAndLongCourse();
